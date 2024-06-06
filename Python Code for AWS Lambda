@@ -4,7 +4,7 @@ import boto3
 import time
 from datetime import datetime
 
-
+## Idenitfication and parsing of data file
 def lambda_handler(event, context):
     
     event_params=event["Records"][0]
@@ -27,12 +27,15 @@ def lambda_handler(event, context):
     list_data = list(lines)
     
     print(list_data)
+
+## Creation of arrays to hold salary data, and to later perform sum aggregation upon
     Boston = []
     Brooklyn = []
     New_York = []
     Philly = []
     Toronto = []
-  
+
+## For loop that will iterate through parsed data and perform appending based on logic
     for i in list_data:
         if i[1]=='Boston Celtics':
             Boston.append(int(float(i[8])))
@@ -46,13 +49,16 @@ def lambda_handler(event, context):
             Toronto.append(int(float(i[8])))
         else:
             print('Team not found, therefore salary could not be aggregated')
-            
+
+## Print statement to display sum of salaries per array per team
     print("Boston's total salary is " + str(sum(Boston)))
     print("Brooklyn's total salary is " + str(sum(Brooklyn)))
     print("New York's total salary is " + str(sum(New_York)))
     print("Philly's total salary is " + str(sum(Philly)))
     print("Toronto's total salary is " + str(sum(Toronto)))
-    file_content= "All salaries have been updated"
+    file_content= "Total salaries have been updated"
+
+## Create new file with display message in same bucket
     if key=='nba.csv':
         s3 = boto3.client('s3') 
         s3.put_object(Body=file_content, Bucket=bucket, Key='Aggregation')
