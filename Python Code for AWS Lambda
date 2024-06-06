@@ -1,0 +1,63 @@
+import csv
+import json
+import boto3
+import time
+from datetime import datetime
+
+
+def lambda_handler(event, context):
+    
+    event_params=event["Records"][0]
+    
+    bucket=event_params["s3"]["bucket"]["name"]
+    key=event_params["s3"]["object"]["key"]
+    
+    print("here")
+    
+    s3_resource = boto3.resource('s3')
+    s3_object = s3_resource.Object(bucket, key)
+    
+    data = s3_object.get()['Body'].read().decode('utf-8').splitlines()
+    
+    lines = csv.reader(data)
+    print(lines)
+    headers = next(lines)
+    print('headers: %s' %(headers))
+    
+    list_data = list(lines)
+    
+    print(list_data)
+    Boston = []
+    Brooklyn = []
+    New_York = []
+    Philly = []
+    Toronto = []
+  
+    for i in list_data:
+        if i[1]=='Boston Celtics':
+            Boston.append(int(float(i[8])))
+        elif i[1] == 'Brooklyn Nets':
+            Brooklyn.append(int(float(i[8])))
+        elif i[1] == 'New York Knicks':
+            New_York.append(int(float(i[8])))
+        elif i[1] == 'Philadelphia 76ers':
+            Philly.append(int(float(i[8])))
+        elif i[1] == 'Toronto Raptors':
+            Toronto.append(int(float(i[8])))
+        else:
+            print('Team not found, therefore salary could not be aggregated')
+            
+    print("Boston's total salary is " + str(sum(Boston)))
+    print("Brooklyn's total salary is " + str(sum(Brooklyn)))
+    print("New York's total salary is " + str(sum(New_York)))
+    print("Philly's total salary is " + str(sum(Philly)))
+    print("Toronto's total salary is " + str(sum(Toronto)))
+    file_content= "All salaries have been updated"
+    if key=='nba.csv':
+        s3 = boto3.client('s3') 
+        s3.put_object(Body=file_content, Bucket=bucket, Key='Aggregation')
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps('Hello from Lambda!')
+    }
