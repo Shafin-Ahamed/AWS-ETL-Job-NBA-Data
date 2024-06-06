@@ -56,7 +56,7 @@ def lambda_handler(event, context):
     print("New York's total salary is " + str(sum(New_York)))
     print("Philly's total salary is " + str(sum(Philly)))
     print("Toronto's total salary is " + str(sum(Toronto)))
-    file_content= "Total salaries have been updated"
+    file_content= "Total salary job has run successfully, good job!"
 
 ## Create new file with display message in same bucket
     if key=='nba.csv':
