@@ -1,3 +1,4 @@
+# NBA Salary Project
 For this repository, there is a single Python file for a Lambda function.
 
 This function represents an ETL job that I ran in AWS to work with NBA player data. 
